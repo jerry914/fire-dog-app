@@ -52,7 +52,7 @@ export default {
 
     // setup the icon
     var fireIcon = L.icon({
-        iconUrl:'https://raw.githubusercontent.com/jerry914/fire-dog-app/gh-pages/assets/fire.png',
+        iconUrl:'https://raw.githubusercontent.com/jerry914/fire-dog-app/main/src/assets/fire.png',
         iconSize: [20, 20],
         iconAnchor: [10, 10]
     })
