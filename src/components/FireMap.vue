@@ -51,16 +51,15 @@ export default {
     }).addTo(map)
 
     // setup the icon
-    // var fireIcon = L.icon({
-    //     iconUrl:'@/assets/fire.png',
-    //     iconSize: [38, 95],
-    //     iconAnchor: [22, 94],
-    //     popupAnchor: [-3, -76]
-    // }) // {icon: fireIcon}
+    var fireIcon = L.icon({
+        iconUrl:'https://raw.githubusercontent.com/jerry914/fire-dog-app/gh-pages/assets/fire.png',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+    })
 
     // setup the markers
     this.fireplaces.forEach(function(coordinate) {
-      var marker = L.marker([coordinate[0], coordinate[1]])
+      var marker = L.marker([coordinate[0], coordinate[1]], {icon: fireIcon})
       marker.addTo(map)
     })
   }
