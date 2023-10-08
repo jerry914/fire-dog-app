@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import L from 'leaflet'
+
 export default {
   name: 'FireMap ',
   props: {
@@ -40,28 +40,27 @@ export default {
     }
   },
   mounted() {
-    // Sstup the map
-    var map = L.map('map', {
-      center: [20.915, 84.686],
-      zoom: 5
-    })
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 8,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map)
+    this.initMap()
 
-    // setup the icon
-    var fireIcon = L.icon({
-        iconUrl:'https://raw.githubusercontent.com/jerry914/fire-dog-app/main/src/assets/fire.png',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10]
-    })
+    // // setup the markers
+    // this.fireplaces.forEach(function(coordinate) {
+    //   var marker = L.marker([coordinate[0], coordinate[1]], {icon: fireIcon})
+    //   marker.addTo(map)
+    // })
+  },
+  methods: {
+    initMap() {
+      var map = new window.google.maps.Map(document.getElementById('map'), {
+          zoom: 5,
+          center: { lat: 38.883056, lng: -77.016389 }
+      });
 
-    // setup the markers
-    this.fireplaces.forEach(function(coordinate) {
-      var marker = L.marker([coordinate[0], coordinate[1]], {icon: fireIcon})
-      marker.addTo(map)
-    })
+      new window.google.maps.KmlLayer({
+          url: 'https://storage.googleapis.com/fire-dog-storage/FirespotArea_SUOMI_VIIRS_C2_USA_contiguous_and_Hawaii_24h.kmz',
+          map: map
+      });
+
+    }
   }
 }
 </script>
