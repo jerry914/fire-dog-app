@@ -3,19 +3,20 @@
   el-row(:gutter="20")
     el-col(:span="6")
       .navigation-container
-        //- h2 Find a location
-        //- el-select.nav-select(v-model='value' multiple='' filterable='' remote='' reserve-keyword='' placeholder='Please enter a keyword' :remote-method='remoteMethod' :loading='loading')
-        //-   el-option(v-for='item in options' :key='item.value' :label='item.label' :value='item.value')
         h2 Select date
         el-date-picker.nav-select(v-model="fireDate" type="date")
+        h2 Player
+        el-button(type="primary" round) 6 months
+        el-button(type="primary" round) 1 year
+        el-button(type="primary" round) 10 years
     el-col(:span="18")
-      FireMap
+      FireMap(:fireplaces="fireplaces")
 </template>
 
 <script>
 // @ is an alias to /src
 import FireMap from '@/components/FireMap.vue'
-
+import axios from 'axios'
 export default {
   name: 'HomeView',
   components: {
@@ -23,48 +24,59 @@ export default {
   },
   data() {
     return {
-      fireDate: new Date(),
-      options: [],
-      value: [],
-      list: [],
-      loading: false,
-      states: ["Alabama", "Alaska", "Arizona",
-      "Arkansas", "California", "Colorado",
-      "Connecticut", "Delaware", "Florida",
-      "Georgia", "Hawaii", "Idaho", "Illinois",
-      "Indiana", "Iowa", "Kansas", "Kentucky",
-      "Louisiana", "Maine", "Maryland",
-      "Massachusetts", "Michigan", "Minnesota",
-      "Mississippi", "Missouri", "Montana",
-      "Nebraska", "Nevada", "New Hampshire",
-      "New Jersey", "New Mexico", "New York",
-      "North Carolina", "North Dakota", "Ohio",
-      "Oklahoma", "Oregon", "Pennsylvania",
-      "Rhode Island", "South Carolina",
-      "South Dakota", "Tennessee", "Texas",
-      "Utah", "Vermont", "Virginia",
-      "Washington", "West Virginia", "Wisconsin",
-      "Wyoming"]
+      fireDate: null,
+      fireplaces: [
+        {location: new window.google.maps.LatLng(25.033065, 121.563696), weight: 16},
+        {location: new window.google.maps.LatLng(25.032099, 121.561341), weight: 5},
+        {location: new window.google.maps.LatLng(25.031958, 121.558931), weight: 8},
+        {location: new window.google.maps.LatLng(25.035347, 121.559460), weight: 5}
+      ]
+    }
+  },
+  watch: {
+    fireDate(val) {
+      this.getFireplaces(this.formatDate(val))
     }
   },
   mounted() {
-    this.list = this.states.map(item => {
-      return { value: `value:${item}`, label: `label:${item}` };
-    })
+    this.fireDate = new Date()
   },
   methods: {
-    remoteMethod(query) {
-      if (query !== '') {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-          this.options = this.list.filter(item => {
-            return item.label.toLowerCase()
-              .indexOf(query.toLowerCase()) > -1;
-          });
-        }, 200)
-      } else {
-        this.options = []
+    getFireplaces(date) {
+      axios.get('https://storage.googleapis.com/fire-dog-storage/sorted_by_date/'+date+'.json').then((response) => {
+        this.jsonData = response.data
+        this.jsonData.forEach((data) => {
+          this.fireplaces.push(this.transformData(data))
+        })
+        console.log(this.fireplaces)
+      }).catch((error) => {
+        console.error('An error occurred:', error)
+        this.$message({
+          showClose: true,
+          message: 'Database error',
+          type: 'error'
+        });
+      })
+    },
+    formatDate(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
+    transformData(data) {
+      const latitude = parseFloat(data.latitude);
+      const longitude = parseFloat(data.longitude);
+      const frp = parseFloat(data.frp);
+
+      // Map the FRP value from 1 to 100
+      const weight = Math.min(Math.max(Math.round(frp * 100), 1), 100);
+
+      return {
+        latitude: latitude,
+        longitude: longitude,
+        location: new window.google.maps.LatLng(latitude, longitude),
+        weight: weight,
       }
     }
   }
