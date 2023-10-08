@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkfire_dog_app"]=self["webpackChunkfire_dog_app"]||[]).push([[443],{9201:function(n,a,e){e.r(a),e.d(a,{default:function(){return p}});var r=e(3099);const u={class:"about"},t=(0,r._)("h1",null,"This is an about page",-1),s=[t];function i(n,a){return(0,r.wg)(),(0,r.iD)("div",u,s)}var c=e(5727);const o={},f=(0,c.Z)(o,[["render",i]]);var p=f}}]);
+//# sourceMappingURL=about.e8e28710.js.map
